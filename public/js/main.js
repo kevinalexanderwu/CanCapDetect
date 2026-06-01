@@ -155,3 +155,26 @@ revealEls.forEach(el => {
   el.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
   observer.observe(el);
 });
+
+function goToDetect(method) {
+  // Simpan method pilihan (upload / camera) di sessionStorage
+  // agar halaman detect bisa langsung buka tab yang sesuai
+  sessionStorage.setItem('detect_method', method);
+  window.location.href = '/detect';
+}
+ 
+// Tombol hero
+document.getElementById('btnOpenCameraHero').addEventListener('click', () => goToDetect('camera'));
+document.getElementById('btnUploadHero').addEventListener('click', () => goToDetect('upload'));
+ 
+// Tombol CTA
+document.getElementById('btnOpenCameraCTA').addEventListener('click', () => goToDetect('camera'));
+document.getElementById('btnUploadCTA').addEventListener('click', () => goToDetect('upload'));
+ 
+// File input (jika masih ada di home, arahkan ke detect)
+const fileInputHome = document.getElementById('fileInput');
+if (fileInputHome) {
+  fileInputHome.addEventListener('change', () => {
+    goToDetect('upload');
+  });
+}
