@@ -15,8 +15,17 @@
     <a href="{{ route('home') }}">
       <img class="logo_product" src="{{ asset('images/logo_product.png') }}" alt="CanCap Detect">
     </a>
-    <img class="binus_binus" src="{{ asset('images/binus_binus.png') }}" alt="Binus">
+    <img class="binus_binus" src="{{ asset('images/logo_binus.png') }}" alt="Binus">
   </nav>
+      <div class="back-wrapper">
+    <button class="btn-back" onclick="window.location.href='{{ route('home') }}'">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+        <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      Back
+    </button>
+  </div>
+  <div class="detect-page"></div>
 
   <!-- DETECT PAGE -->
   <div class="detect-page">
@@ -135,6 +144,7 @@
       </div>
 
       <div class="detections-list" id="detectionsList"></div>
+      <div id="detectionInfo"></div>
 
       <div class="result-actions">
         <button class="btn btn-primary" onclick="resetDetection()">Detect Another</button>

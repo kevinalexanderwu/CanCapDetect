@@ -233,9 +233,83 @@ function showResults(data, originalSrc) {
   } else {
     listEl.innerHTML = '<p class="no-detections">No objects detected above confidence threshold.</p>';
   }
+  // Tampilkan info per kelas
+  const infoEl = document.getElementById('detectionInfo');
+  const detectedLabels = data.detections.map(d => d.label.toLowerCase());
 
+  const INFO_MAP = {
+    'can\ncritical defect': {
+      category: 'Kaleng (Can Inspection)',
+      title: 'Critical Defect Detected',
+      desc: 'Kerusakan kritis terdeteksi pada kaleng, seperti penyok sangat besar, deformasi parah, atau lubang yang mengancam integritas kemasan.',
+      action: 'Produk tidak aman untuk didistribusikan. Segera pisahkan dan buang dari lini produksi.',
+      isDefect: true
+    },
+    'can\nmajor defect': {
+      category: 'Kaleng (Can Inspection)',
+      title: 'Major Defect Detected',
+      desc: 'Kerusakan serius terdeteksi pada kaleng, seperti penyok besar, deformasi bentuk, lubang, atau kerusakan yang dapat memengaruhi integritas kemasan.',
+      action: 'Produk berpotensi tidak aman untuk didistribusikan. Segera pisahkan dari lini produksi dan lakukan pemeriksaan lebih lanjut.',
+      isDefect: true
+    },
+    'can\nminor defect': {
+      category: 'Kaleng (Can Inspection)',
+      title: 'Minor Defect Detected',
+      desc: 'Kerusakan ringan terdeteksi pada permukaan kaleng, seperti goresan kecil atau penyok ringan yang tidak secara langsung memengaruhi fungsi kemasan.',
+      action: 'Disarankan untuk dilakukan inspeksi manual guna memastikan produk masih memenuhi standar kualitas.',
+      isDefect: true
+    },
+    'can\nno defect': {
+      category: 'Kaleng (Can Inspection)',
+      title: 'No Defect Detected',
+      desc: 'Tidak ditemukan kerusakan pada kaleng. Bentuk dan kondisi kemasan sesuai dengan standar kualitas yang ditetapkan.',
+      action: 'Produk dapat melanjutkan ke tahap produksi atau distribusi berikutnya.',
+      isDefect: false
+    },
+    'cap\nno defect': {
+      category: 'Tutup Botol (Bottle Cap Inspection)',
+      title: 'Cap Condition: Good',
+      desc: 'Tutup botol terpasang dengan baik dan tidak ditemukan indikasi kerusakan, deformasi, atau ketidaksesuaian.',
+      action: 'Produk memenuhi standar kualitas dan aman untuk diproses lebih lanjut.',
+      isDefect: false
+    },
+    'cap\ndefect': {
+      category: 'Tutup Botol (Bottle Cap Inspection)',
+      title: 'Cap Defect Detected',
+      desc: 'Kerusakan atau ketidaksesuaian terdeteksi pada tutup botol, seperti penyok, retak, pemasangan tidak sempurna, atau deformasi bentuk.',
+      action: 'Produk sebaiknya dipisahkan untuk inspeksi lanjutan guna mencegah risiko kebocoran atau penurunan kualitas produk.',
+      isDefect: true
+    },
+  };
+
+  const shownCategories = new Set();
+  let infoHTML = '<h3 class="detections-title">Inspection Report</h3>';
+
+  data.detections.forEach(d => {
+    const key = d.label.toLowerCase();
+    const info = INFO_MAP[key];
+    console.log('key:', JSON.stringify(key), '| found:', !!info);
+    if (!info) return;
+
+    if (!shownCategories.has(info.category)) {
+      infoHTML += `<div class="info-category">${info.category}</div>`;
+      shownCategories.add(info.category);
+    }
+
+    infoHTML += `
+      <div class="info-card ${info.isDefect ? 'defect' : 'good'}">
+        <div class="info-title ${info.isDefect ? 'defect' : 'good'}">
+          ${info.title}
+        </div>
+        <div class="info-desc">${info.desc}</div>
+        <div class="info-action">${info.action}</div>
+      </div>
+    `;
+  });
+
+  infoEl.innerHTML = infoHTML;
   document.getElementById('resultSection').style.display = '';
-  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
   // Animasi confidence bar
   // Animasi confidence bar
   setTimeout(() => {
@@ -272,4 +346,20 @@ function resetDetection() {
 
   switchTab('upload');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Auto-open berdasarkan sessionStorage ───────────────────────────────────
+const method = sessionStorage.getItem('detect_method');
+if (method) {
+  sessionStorage.removeItem('detect_method');
+  if (method === 'camera') {
+    switchTab('camera');
+    startCamera();
+  } else if (method === 'upload') {
+    switchTab('upload');
+    document.getElementById('dropzone').classList.add('dragover');
+    setTimeout(() => {
+      document.getElementById('dropzone').classList.remove('dragover');
+    }, 1500);
+  } 
 }

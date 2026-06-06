@@ -12,7 +12,7 @@
   <!-- NAV -->
   <nav>
     <img class="logo_product" src="{{ asset('images/logo_product.png') }}">
-    <img class="binus_binus" src="{{ asset('images/binus_binus.png') }}">
+    <img class="logo_binus" src="{{ asset('images/logo_binus.png') }}">
   </nav>
 
   <!-- HERO -->
@@ -164,13 +164,6 @@
     &copy; 2026 CanCap Detect. AI-powered defect detection
   </footer>
 
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modalOverlay">
-    <div class="modal">
-      <button class="modal-close" id="modalClose">&times;</button>
-      <div id="modalContent"></div>
-    </div>
-  </div>
 
   <script src="{{ asset('js/main.js') }}"></script></script>
 </body>
